@@ -1,0 +1,99 @@
+#ifndef NETMANAGER_H
+#define NETMANAGER_H
+
+
+#include <QtNetwork/QHostAddress>
+#include <QtCore/QString>
+#include <QtNetwork/QTcpSocket>
+#include <QtNetwork/QtNetwork>
+#include <QtCore/QTime>
+#include <QMap>
+
+/*
+QT_BEGIN_NAMESPACE
+//class QDialogButtonBox;
+//class QLabel;
+//class QLineEdit;
+//class QPushButton;
+class QTcpSocket;
+class QNetworkSession;
+QT_END_NAMESPACE
+*/
+//class NetManager;
+
+static const int MaxBufferSize = 1024000;
+
+
+class NetManager : public QObject
+{
+    Q_OBJECT
+
+public:
+    //NetManager();
+    //NetManager(QObject *parent = 0);
+    static NetManager& GetInstance()
+    {
+        static NetManager instance;
+        return instance;
+    }
+
+    void DummyInit() ;
+    bool SendMsg(QString& data);
+
+    //request to server
+    bool RequestLogIn(QString userid, QString passwd);
+    bool RequestUserIdDupCheck(QString userid);
+    bool RequestEnrollUser(QString userid, QString pass,QString nick);
+    bool RequestFriendList(QString userid);
+    bool RequestAddNewFriend(QString userid, QString friendid);
+
+private slots:
+    void ProcessReadyRead();
+    void ServerConnected();
+    void DisplayError(QAbstractSocket::SocketError socketError);
+
+signals:
+     void sigServerConnected();
+     void sigServerError(QString errStr);
+     void sigLogInOK();
+     void sigLogInFAIL(QString errStr);
+
+     void sigCheckIdOK();
+     void sigCheckIdFAIL(QString errStr);
+
+     void sigEnrollUSerOK();
+     void sigEnrollUSerFAIL(QString errStr);
+
+     void sigFriendList(QStringList friendList);
+
+     void sigAddFriendOK(QString); //friendid
+     void sigAddFriendFAIL(QString errStr);
+
+private:
+    NetManager();
+    QTcpSocket *tcpSocket;
+    QNetworkSession *networkSession;
+
+    QString hostName;
+    quint16 hostPort;
+
+    QByteArray totalBuffered;
+    QString strPacketMsg;
+    QString strPacketUsage;
+
+    typedef void (NetManager::* pHandleFunc )(QStringList strList) ;
+    QMap< QString, pHandleFunc > recvPacketHandleFuncMap;
+
+    // server response handling ////////////////////////////
+    void HandleResponseLogIn(QStringList strList);
+    void HandleResponseEnrollUser(QStringList strList);
+    void HandleResponseCheckId(QStringList strList);
+    void HandleResponseFriendList(QStringList strList);
+    void HandleResponseAddFriend(QStringList strList);
+    ///////////////////////////////////////////////////
+
+    bool SendDataBlock (QByteArray msg );
+};
+
+
+#endif // NETMANAGER_H
