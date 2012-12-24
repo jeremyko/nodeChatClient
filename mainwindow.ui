@@ -10,8 +10,32 @@
     <height>553</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>400</width>
+    <height>553</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>400</width>
+    <height>553</height>
+   </size>
+  </property>
+  <property name="baseSize">
+   <size>
+    <width>400</width>
+    <height>553</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>nodeChat</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QTreeWidget" name="friendTree">
@@ -40,6 +64,19 @@
     </property>
     <property name="text">
      <string>add friend</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnRemoveFriend">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>0</y>
+      <width>111</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>remove friend</string>
     </property>
    </widget>
   </widget>

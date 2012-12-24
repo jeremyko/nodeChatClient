@@ -44,7 +44,6 @@ void RegisterDialog::userIdDupCheck()
 {
     qDebug("userIdDupCheck");
     ui->lblErrorText->setText("");
-    //ui->lblErrorText->setTextFormat();
     NetManager::GetInstance().RequestUserIdDupCheck( ui->UserIDInput->toPlainText() );
 }
 
@@ -72,23 +71,8 @@ void RegisterDialog::WhenEnrollUSerOK()
     msgBox->setInformativeText("Welcome,"+ui->UserIDInput->toPlainText());
     msgBox->setStandardButtons(QMessageBox::Close);
     msgBox->setDefaultButton(QMessageBox::Close);
-    /*int ret = */msgBox->exec();
-    /*
-    switch (ret)
-    {
-    case QMessageBox::Save:
-    msgBox.information(this, "Save", "Save");
-    break;
-    case QMessageBox::Discard:
-    msgBox.information(this, "Discard", "Discard");
-    break;
-    case QMessageBox::Cancel:
-    msgBox.information(this, "Cancel", "Cancel");
-    break;
-    default:
-    break;
-    }
-         */
+    msgBox->exec();
+
     close();
 }
 
@@ -103,10 +87,7 @@ void RegisterDialog::enrollUser()
 {
     qDebug("enroll User");
     ui->lblErrorText->setText("");
-    //ui->UserIDInput
-    //ui->NickInput
-    //ui->PasswdInput
-    //ui->ConfirmPasswdInput
+
     if(ui->PasswdInput->toPlainText() != ui->ConfirmPasswdInput->toPlainText() )
     {
         ui->lblErrorText->setStyleSheet("QLabel { color : red; }");

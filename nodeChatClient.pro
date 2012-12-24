@@ -18,7 +18,6 @@ SOURCES += main.cpp\
     logindialog.cpp \
     netmanager.cpp \
     registerdialog.cpp \
-    mytreewidget.cpp \
     addnewfrienddialog.cpp
 
 HEADERS  += mainwindow.h \
@@ -31,8 +30,8 @@ HEADERS  += mainwindow.h \
     addnewfrienddialog.h
 
 FORMS    += mainwindow.ui \
-    LogInDialog.ui \
     chatdialog.ui \
     logindialog.ui \
     registerdialog.ui \
-    addnewfrienddialog.ui
+    addnewfrienddialog.ui \
+    LogInDialog.ui

@@ -13,6 +13,18 @@
     <height>91</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>284</width>
+    <height>91</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>284</width>
+    <height>91</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>New Friend</string>
   </property>

@@ -3,10 +3,13 @@
 
 #include <QMainWindow>
 #include <QTreeWidgetItem>
+#include "chatdialog.h"
+
 namespace Ui {
 class MainWindow;
 }
 
+typedef QMap<QString, ChatDialog*> DlgMapT;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -15,6 +18,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+signals:
+    void pressedRButton(QTreeWidget *, QTreeWidgetItem *pCurItem);
+    void itemClicked(QTreeWidgetItem *, int);
 
 public slots:
     void Initialize();
@@ -22,13 +28,23 @@ public slots:
     void MainShow(QString userid);
     void WhenMyFriendListComes(QStringList friendList);
     void AddFriend();
-    void AddNewFriendItem(QString friendid);
+    void RemoveFriend();
+    void AddNewFriendItem(QString friendid,QString friendNick, QString OnOffLine);
 
+    void WhenRemoveFriendResultFAIL(QString err);
+    void WhenRemoveFriendResultOK(QString friendid);
+
+    void WhenChatMsgComes(QStringList msgData);
+
+    void OnTreeLButtonDbClicked( QTreeWidgetItem*, int);
+
+    void OnChatDlgClosing(QString friendid);
 
 private:
     Ui::MainWindow *ui;
     QString userid;
     QTreeWidgetItem* rowOnline, *rowOffline;
+    DlgMapT dlgMap;
     //bool event(QEvent *event);
 };
 

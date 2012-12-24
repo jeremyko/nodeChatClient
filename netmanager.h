@@ -29,8 +29,6 @@ class NetManager : public QObject
     Q_OBJECT
 
 public:
-    //NetManager();
-    //NetManager(QObject *parent = 0);
     static NetManager& GetInstance()
     {
         static NetManager instance;
@@ -46,6 +44,8 @@ public:
     bool RequestEnrollUser(QString userid, QString pass,QString nick);
     bool RequestFriendList(QString userid);
     bool RequestAddNewFriend(QString userid, QString friendid);
+    bool RequestRemoveFriend(QString userid, QString friendid);
+    bool RequestChat(QString userid, QString friendid, QString msg);
 
 private slots:
     void ProcessReadyRead();
@@ -66,8 +66,13 @@ signals:
 
      void sigFriendList(QStringList friendList);
 
-     void sigAddFriendOK(QString); //friendid
+     void sigAddFriendOK(QString, QString,QString); //friendid
      void sigAddFriendFAIL(QString errStr);
+
+     void sigRemoveFriendFAIL(QString errStr);
+     void sigRemoveFriendOK(QString friendid);
+
+     void sigChatMsg(QStringList msgData);
 
 private:
     NetManager();
@@ -90,8 +95,11 @@ private:
     void HandleResponseCheckId(QStringList strList);
     void HandleResponseFriendList(QStringList strList);
     void HandleResponseAddFriend(QStringList strList);
+    void HandleResponseRemoveFriend(QStringList strList);
     ///////////////////////////////////////////////////
-
+    void HandleChatMsg(QStringList strList);
+    void HandleLoggedIn(QStringList strList);
+    void HandleLoggedOut(QStringList strList);
     bool SendDataBlock (QByteArray msg );
 };
 

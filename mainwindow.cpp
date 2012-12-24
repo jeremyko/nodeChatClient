@@ -3,10 +3,9 @@
 #include "logindialog.h"
 #include "netmanager.h"
 #include "addnewfrienddialog.h"
-#include <QtCore/QTimer>
-//#include <QSplitter>
-//#include <QStandardItemModel>
 
+
+#include <QtCore/QTimer>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -23,10 +22,6 @@ MainWindow::MainWindow(QWidget *parent) :
     header->setText(1, "nick");
     ui->friendTree->setHeaderItem(header);
 
-    //QTreeWidgetItem* rowOnline = new QTreeWidgetItem(ui->friendTree);
-    //rowOnline->setText(0, "Online");
-    //rowOnline->setText(1, "");
-
     rowOnline = new QTreeWidgetItem(ui->friendTree);
     ui->friendTree->addTopLevelItem(rowOnline);
     rowOnline->setText(0, "Online");
@@ -36,16 +31,30 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->friendTree->addTopLevelItem(rowOffline);
     rowOffline->setText(0, "Offline");
     rowOffline->setText(1, "");
-    ///////////////////////////////////////////////////
+
+    connect(ui->friendTree, SIGNAL( itemDoubleClicked(QTreeWidgetItem*,int)) , this,
+            SLOT( OnTreeLButtonDbClicked( QTreeWidgetItem* , int ))  );
 
     QObject::connect(&NetManager::GetInstance(), SIGNAL(sigFriendList(QStringList)),
                          this, SLOT(WhenMyFriendListComes(QStringList)));
 
     QObject::connect(ui->btnAddFriend, SIGNAL(clicked()), this, SLOT( AddFriend()));
+    QObject::connect(ui->btnRemoveFriend, SIGNAL(clicked()), this, SLOT( RemoveFriend()));
 
     //등록 화면과 시그널을 공유함
-    QObject::connect(&NetManager::GetInstance(), SIGNAL(sigAddFriendOK(QString)),
-                         this, SLOT(AddNewFriendItem(QString)));
+    QObject::connect(&NetManager::GetInstance(), SIGNAL(sigAddFriendOK(QString,QString,QString)),
+                         this, SLOT(AddNewFriendItem(QString,QString,QString)));
+
+    QObject::connect(&NetManager::GetInstance(), SIGNAL(sigRemoveFriendFAIL(QString)),
+                         this, SLOT(WhenRemoveFriendResultFAIL(QString)));
+
+    QObject::connect(&NetManager::GetInstance(), SIGNAL(sigRemoveFriendOK(QString)),
+                         this, SLOT(WhenRemoveFriendResultOK(QString)));
+
+    QObject::connect(&NetManager::GetInstance(), SIGNAL(sigChatMsg(QStringList)),
+                         this, SLOT(WhenChatMsgComes(QStringList)));
+
+
 
 }
 
@@ -54,31 +63,98 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-/*
-bool MainWindow::event(QEvent *event)
+
+void MainWindow::OnTreeLButtonDbClicked( QTreeWidgetItem* item, int nIdex)
 {
-    int returnValue = QWidget::event(event);
+    qDebug("OnTreeLButtonDbClicked:[%d]", nIdex);
+    qDebug("OnTreeLButtonDbClicked:[%s]", item->text(0).toUtf8().constData()); //id
+    qDebug("OnTreeLButtonDbClicked:[%s]", item->text(1).toUtf8().constData()); //nick
 
-    if (event->type() == QEvent::Polish)
-    {
-        LogInDialog logindlg(this);
+    ChatDialog* pChatDlg = new ChatDialog(this->userid,item->text(0),"", this);
+    QObject::connect(pChatDlg, SIGNAL(ChatDlgClosing(QString)), this, SLOT( OnChatDlgClosing(QString)));
 
-        QObject::connect( &logindlg,SIGNAL(finished(int)), this, SLOT( mainExit() ));
-
-        logindlg.show();
-        logindlg.exec();
-
-        return true;
-    }
-
-    return returnValue;
+    dlgMap.insert(item->text(0), pChatDlg);
+    pChatDlg->show();
 }
-*/
+
+void MainWindow::OnChatDlgClosing(QString friendid)
+{
+    DlgMapT::const_iterator i =  dlgMap.find(friendid);
+    if(i != dlgMap.end())
+    {
+        qDebug( "Found in DlgMap");
+        ChatDialog* pChatDlg = i.value();
+        int nRtn = dlgMap.remove(friendid);
+        if(nRtn >0)
+        {
+            qDebug( "delete");
+            delete pChatDlg;
+            pChatDlg = NULL;
+        }
+    }
+}
+
+void MainWindow::WhenChatMsgComes(QStringList msgData)
+{
+    qDebug( "0: [%s]", msgData[0].toUtf8().constData() );
+    qDebug( "1: [%s]", msgData[1].toUtf8().constData() );//friendid
+    qDebug( "2: [%s]", msgData[2].toUtf8().constData() );//myid
+    qDebug( "3: [%s]", msgData[3].toUtf8().constData() );//msg
+
+    //find chat dlg
+    DlgMapT::const_iterator i =  dlgMap.find(msgData[1]);
+    if(i != dlgMap.end())
+    {
+        qDebug( "Found in DlgMap");
+        ChatDialog* pChatDlg = i.value();
+        pChatDlg->AppendMsg(msgData[3]);
+    }
+    else
+    {
+        ChatDialog* pChatDlg = new ChatDialog(this->userid,msgData[1],msgData[3], this);
+        QObject::connect(pChatDlg, SIGNAL(ChatDlgClosing(QString)), this, SLOT( OnChatDlgClosing(QString)));
+        dlgMap.insert(msgData[1], pChatDlg);
+        pChatDlg->show();
+    }
+}
+
+void MainWindow::WhenRemoveFriendResultFAIL(QString err)
+{
+    qDebug("WhenRemoveFriendResultFAIL[%s]", err.toUtf8().constData());
+}
+
+void MainWindow::WhenRemoveFriendResultOK(QString friendid)
+{
+    qDebug("WhenRemoveFriendResultOK [%s]", friendid.toUtf8().constData());
+
+    QTreeWidgetItem *pRemove = ui->friendTree->currentItem();
+
+    int i = ui->friendTree->indexOfTopLevelItem(pRemove);
+    qDebug("indexOfTopLevelItem[%d]", i);
+    if(i < 0 )
+    {
+        ui->friendTree->takeTopLevelItem(i);
+        delete pRemove; // do not forget to delete the item if it is not owned by any other widget.
+    }
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::AddNewFriendItem(QString friendid)
+void MainWindow::AddNewFriendItem(QString friendid,QString friendNick, QString OnOffLine)
 {
     qDebug("AddNewFriendItem");
-    //TODO : on off line?
+    QTreeWidgetItem* subItem = new QTreeWidgetItem;
+    subItem->setText(0,  friendid);
+    subItem->setText(1, friendNick);
+
+    if(OnOffLine == "online")
+    {
+        rowOnline->addChild(subItem);
+    }
+    else
+    {
+        rowOffline->addChild(subItem);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -90,6 +166,18 @@ void MainWindow::AddFriend()
     addFriendDlg.userid = this->userid;
     addFriendDlg.show();
     addFriendDlg.exec();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::RemoveFriend()
+{
+    qDebug("RemoveFriend");
+    //request remove friend
+
+    QTreeWidgetItem *pRemove = ui->friendTree->currentItem();
+
+    NetManager::GetInstance().RequestRemoveFriend(this->userid,pRemove->text(0) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -130,38 +218,28 @@ void MainWindow::MainShow(QString userid)
 
 void MainWindow::WhenMyFriendListComes(QStringList friendList)
 {
-    // FRIENDLIST|aaa|offline|bbb|offline|ccc|offline|
+    // FRIENDLIST|id1|nick1|online|id2|nick2|offline...
     for( int i = 1; i < friendList.length(); i++) //1 ==> except for FRIENDLIST
     {
         qDebug("[%d]friendlist [%s]", i, friendList[i].toLocal8Bit().constData() );
 
-        if( i % 2 == 0 )
+        if( i % 3 == 0 )
         {
-            //2nd-->on/off-line
+            QTreeWidgetItem* subItem = new QTreeWidgetItem;
+            subItem->setText(0, friendList[i-2] );
+            subItem->setText(1, friendList[i-1]);
+            //3rd-->on/off-line
             if( "online" == friendList[i] )
             {
-                QTreeWidgetItem* subItem = new QTreeWidgetItem;
-                subItem->setText(0, friendList[i-1] );
-                subItem->setText(1, "nick1");
                 rowOnline->addChild(subItem);
             }
             else
             {
-                QTreeWidgetItem* subItem = new QTreeWidgetItem;
-                subItem->setText(0, friendList[i-1] );
-                subItem->setText(1, "nick1");
                 rowOffline->addChild(subItem);
             }
         }
     }
-    /*
-    QStringList::const_iterator constIterator;
-    for (constIterator = friendList.constBegin();
-         constIterator != friendList.constEnd();
-         ++constIterator)
-    {
-        qDebug("[%d]friendlist [%s]", nIndex, (*constIterator).toLocal8Bit().constData() );
-    }
-    */
+
     ui->friendTree->expandAll();
 }
+
