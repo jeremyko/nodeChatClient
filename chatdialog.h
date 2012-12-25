@@ -18,6 +18,7 @@ public:
     QString myid,friendid, initWithThisMsg;
 
     void AppendMsg(QString newMsg);
+    void SetInputEnabled (bool bEnable);
 
 signals:
     void ChatDlgClosing(QString friendid);

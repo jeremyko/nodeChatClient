@@ -9,17 +9,7 @@
 #include <QtCore/QTime>
 #include <QMap>
 
-/*
-QT_BEGIN_NAMESPACE
-//class QDialogButtonBox;
-//class QLabel;
-//class QLineEdit;
-//class QPushButton;
-class QTcpSocket;
-class QNetworkSession;
-QT_END_NAMESPACE
-*/
-//class NetManager;
+#define DELIM "|"
 
 static const int MaxBufferSize = 1024000;
 
@@ -73,6 +63,8 @@ signals:
      void sigRemoveFriendOK(QString friendid);
 
      void sigChatMsg(QStringList msgData);
+     void sigSomeOneLoggedIn(QStringList strList);
+     void sigSomeOneLoggedOut(QStringList strList);
 
 private:
     NetManager();
@@ -85,7 +77,7 @@ private:
     QByteArray totalBuffered;
     QString strPacketMsg;
     QString strPacketUsage;
-
+    //void PacketHandle(QDataStream* in, uint nMsgLen);
     typedef void (NetManager::* pHandleFunc )(QStringList strList) ;
     QMap< QString, pHandleFunc > recvPacketHandleFuncMap;
 

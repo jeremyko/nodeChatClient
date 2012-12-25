@@ -56,22 +56,6 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QTextEdit" name="UserPasswdInput">
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>70</y>
-     <width>251</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="focusPolicy">
-    <enum>Qt::StrongFocus</enum>
-   </property>
-   <property name="tabChangesFocus">
-    <bool>true</bool>
-   </property>
-  </widget>
   <widget class="QPushButton" name="btnLogin">
    <property name="geometry">
     <rect>
@@ -140,7 +124,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>80</y>
+     <y>70</y>
      <width>62</width>
      <height>16</height>
     </rect>
@@ -162,10 +146,19 @@
     <string/>
    </property>
   </widget>
+  <widget class="QLineEdit" name="UserPasswdInput">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>61</y>
+     <width>251</width>
+     <height>31</height>
+    </rect>
+   </property>
+  </widget>
  </widget>
  <tabstops>
   <tabstop>UserIDInput</tabstop>
-  <tabstop>UserPasswdInput</tabstop>
   <tabstop>btnLogin</tabstop>
   <tabstop>btnClose</tabstop>
   <tabstop>btnRegister</tabstop>

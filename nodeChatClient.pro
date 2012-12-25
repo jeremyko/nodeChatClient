@@ -18,16 +18,17 @@ SOURCES += main.cpp\
     logindialog.cpp \
     netmanager.cpp \
     registerdialog.cpp \
-    addnewfrienddialog.cpp
+    addnewfrienddialog.cpp \
+    chatinputtextedit.cpp
 
 HEADERS  += mainwindow.h \
     chatdialog.h \
     logindialog.h \
     netmanager.h \
-    packets.h \
     registerdialog.h \
     mytreewidget.h \
-    addnewfrienddialog.h
+    addnewfrienddialog.h \
+    chatinputtextedit.h
 
 FORMS    += mainwindow.ui \
     chatdialog.ui \

@@ -35,6 +35,9 @@ public slots:
     void WhenRemoveFriendResultOK(QString friendid);
 
     void WhenChatMsgComes(QStringList msgData);
+    void WhenSomeOneLoggedIn(QStringList data);
+    void WhenSomeOneLoggedOut(QStringList data);
+
 
     void OnTreeLButtonDbClicked( QTreeWidgetItem*, int);
 
@@ -45,7 +48,6 @@ private:
     QString userid;
     QTreeWidgetItem* rowOnline, *rowOffline;
     DlgMapT dlgMap;
-    //bool event(QEvent *event);
 };
 
 #endif // MAINWINDOW_H

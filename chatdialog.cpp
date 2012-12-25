@@ -1,7 +1,7 @@
 #include "chatdialog.h"
 #include "ui_chatdialog.h"
 #include "netmanager.h"
-#include <QtGui/QVBoxLayout>
+#include "chatinputtextedit.h"
 
 ChatDialog::ChatDialog(QWidget *parent) :
     QDialog(parent),
@@ -23,6 +23,7 @@ ChatDialog::ChatDialog(QString myid, QString friendid, QString firstMsg,QWidget 
     qDebug("this->friendid[%s]", this->friendid.toUtf8().constData() );
 
     QObject::connect(ui->btnSendMsg, SIGNAL(clicked()), this, SLOT( SendMsg()));
+    QObject::connect(ui->MyMsgTE, SIGNAL(sigEnterKeyed()), this, SLOT( SendMsg()));
 
     QTimer::singleShot(0, this, SLOT(Initialize()));
 }
@@ -45,55 +46,17 @@ bool ChatDialog::event ( QEvent * event )
     return returnValue;
 }
 
+
 void ChatDialog::Initialize()
 {
     qDebug("Initialize");
+
+    this->setWindowTitle("From: "+ myid + " To: "+friendid);
+
     if(this->initWithThisMsg.length() > 0 )
     {
         ui->ChatMsgsTE->append(initWithThisMsg);
     }
-
-    //QVBoxLayout* vbox = new QVBoxLayout(this);
-    //vbox->addWidget(ui->ChatMsgsTE);
-    //vbox->addWidget(ui->MyMsgTE);
-    //vbox->addWidget(ui->btnSendMsg);
-    //setLayout(vbox);
-    /*
-
-        QVBoxLayout vbox = new QVBoxLayout(this);
-
-        QVBoxLayout vbox1 = new QVBoxLayout();
-        QHBoxLayout hbox1 = new QHBoxLayout();
-        QHBoxLayout hbox2 = new QHBoxLayout();
-
-        QLabel windLabel = new QLabel("Windows", this);
-        QTextEdit edit = new QTextEdit(this);
-        edit.setEnabled(false);
-
-        QPushButton activate = new QPushButton("Activate", this);
-        QPushButton close = new QPushButton("Close", this);
-        QPushButton help = new QPushButton("Help", this);
-        QPushButton ok = new QPushButton("OK", this);
-
-        vbox.addWidget(windLabel);
-
-        vbox1.addWidget(activate);
-        vbox1.addWidget(close, 0, AlignmentFlag.AlignTop);
-        hbox1.addWidget(edit);
-        hbox1.addLayout(vbox1);
-
-        vbox.addLayout(hbox1);
-
-        hbox2.addWidget(help);
-        hbox2.addStretch(1);
-        hbox2.addWidget(ok);
-
-        vbox.addLayout(hbox2, 1);
-
-        setLayout(vbox);
-
-
-     */
 }
 
 
@@ -104,8 +67,15 @@ void ChatDialog::SendMsg()
     ui->MyMsgTE->clear();
 }
 
+void ChatDialog::SetInputEnabled (bool bEnable)
+{
+    ui->MyMsgTE->setEnabled(bEnable);
+
+}
+
 void ChatDialog::AppendMsg(QString newMsg)
 {
     qDebug("newMsg[%s]", newMsg.toUtf8().constData() );
+
     ui->ChatMsgsTE->append(newMsg);
 }

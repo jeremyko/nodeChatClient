@@ -1,5 +1,4 @@
 #include "netmanager.h"
-#include "packets.h"
 
 #include <QtNetwork/QtNetwork>
 
@@ -32,20 +31,19 @@ NetManager::NetManager()
     recvPacketHandleFuncMap["LOGGED-IN"] = &NetManager::HandleLoggedIn;
     recvPacketHandleFuncMap["LOGGED-OUT"] = &NetManager::HandleLoggedOut;
 
-
-
-
 }
 
 void NetManager::HandleLoggedOut(QStringList strList)
 {
     qDebug("HandleLoggedOut...");
+    emit sigSomeOneLoggedOut(strList);
 
 }
 
 void NetManager::HandleLoggedIn(QStringList strList)
 {
     qDebug("HandleLoggedIn...");
+    emit sigSomeOneLoggedIn(strList);
 
 }
 
@@ -282,11 +280,9 @@ bool NetManager::SendMsg(QString& message)
     return true;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 void NetManager::ProcessReadyRead()
 {
-
     int packetHeaderLen = (int)sizeof(quint32);
     qDebug("\n---- recved data ------\n");
     qint64 bytesAvailable = tcpSocket->bytesAvailable();
@@ -313,15 +309,15 @@ void NetManager::ProcessReadyRead()
         return;
     }
 
+    //PacketHandle(&in, nMsgLen);
+
     char* szData = new char [nMsgLen+1]; //len은 null제외한 길이임.
     memset(szData, 0x00, sizeof(szData));
     in.readRawData ( szData, nMsgLen );
     szData[nMsgLen]=0; // 전송되는 문자열에는 nulll이 없다.null 붙임.
     qDebug("szData=[%s]",  szData );
-
-    strPacketMsg = szData;
-    qDebug("strPacketMsg[%s]", strPacketMsg.toUtf8().constData());
-    QStringList msgList = QString(szData).split(DELIM);
+    QString strPacketMsg = QString::fromUtf8( szData);
+    QStringList msgList = strPacketMsg.split(DELIM);
     delete [] (szData);
     QString strUsage = msgList.at(0);
     qDebug( "strUsage: [%s]", strUsage.toUtf8().constData() );
@@ -346,7 +342,7 @@ void NetManager::ProcessReadyRead()
         szData[nMsgLen]=0; // 전송되는 문자열에는 nulll이 없다.null 붙임.
         qDebug("#szData=[%s]",  szData );
 
-        strPacketMsg = szData;
+        strPacketMsg = QString::fromUtf8( szData);
         qDebug("#strPacketMsg[%s]", strPacketMsg.toUtf8().constData());
         QStringList msgList = QString(szData).split(DELIM);
         delete [] (szData);
@@ -355,6 +351,8 @@ void NetManager::ProcessReadyRead()
         //process packet data
         (*this.*((recvPacketHandleFuncMap[ strUsage ])))(msgList);
 
+        //PacketHandle(inTmp, nMsgLen);
+
         //totalBuffered 에서 len + 4 만큼을 제거 => one packet length
         totalBuffered = totalBuffered.mid(nMsgLen+4);
         int nSize = totalBuffered.size();
@@ -362,11 +360,32 @@ void NetManager::ProcessReadyRead()
     }
 }
 
+//test
+/*
+void NetManager::PacketHandle(QDataStream* in, uint nMsgLen)
+{
+    char* szData = new char [nMsgLen+1]; //len은 null제외한 길이임.
+    memset(szData, 0x00, sizeof(szData));
+    in->readRawData ( szData, nMsgLen );
+    szData[nMsgLen]=0; // 전송되는 문자열에는 nulll이 없다.null 붙임.
+    qDebug("#szData=[%s]",  szData );
+
+    strPacketMsg = QString::fromUtf8( szData);
+    qDebug("#strPacketMsg[%s]", strPacketMsg.toUtf8().constData());
+    QStringList msgList = QString(szData).split(DELIM);
+    delete [] (szData);
+    QString strUsage = msgList.at(0);
+    qDebug( "#strUsage: [%s]", strUsage.toUtf8().constData() );
+    //process packet data
+    (*this.*((recvPacketHandleFuncMap[ strUsage ])))(msgList);
+
+}
+*/
 ////////////////////////////////////////////////////////////////////////////////
 void NetManager::DisplayError(QAbstractSocket::SocketError socketError)
 {
-    QString errStr = tcpSocket->errorString();
-    /*
+    QString errStr ;
+
     switch (socketError) {
     case QAbstractSocket::RemoteHostClosedError:
         break;
@@ -379,9 +398,8 @@ void NetManager::DisplayError(QAbstractSocket::SocketError socketError)
     default:
         errStr = tcpSocket->errorString();
         qCritical("The following error occurred: %s", qPrintable(tcpSocket->errorString()));
-
     }
-    */
+
     qCritical("%s", qPrintable(errStr));
     emit sigServerError(errStr);
 }

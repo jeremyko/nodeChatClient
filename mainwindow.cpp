@@ -6,6 +6,7 @@
 
 
 #include <QtCore/QTimer>
+#include <QList>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -54,7 +55,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(&NetManager::GetInstance(), SIGNAL(sigChatMsg(QStringList)),
                          this, SLOT(WhenChatMsgComes(QStringList)));
 
+    QObject::connect(&NetManager::GetInstance(), SIGNAL(sigSomeOneLoggedIn(QStringList)),
+                         this, SLOT(WhenSomeOneLoggedIn(QStringList)));
 
+    QObject::connect(&NetManager::GetInstance(), SIGNAL(sigSomeOneLoggedOut(QStringList)),
+                         this, SLOT(WhenSomeOneLoggedOut(QStringList)));
 
 }
 
@@ -66,7 +71,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::OnTreeLButtonDbClicked( QTreeWidgetItem* item, int nIdex)
 {
-    qDebug("OnTreeLButtonDbClicked:[%d]", nIdex);
+    qDebug("OnTreeLButtonDbClicked:[%d][%s]", nIdex, item->parent()->text(0).toUtf8().constData());
+    if(item->parent()->text(0) == "Offline")
+    {
+        return;
+    }
     qDebug("OnTreeLButtonDbClicked:[%s]", item->text(0).toUtf8().constData()); //id
     qDebug("OnTreeLButtonDbClicked:[%s]", item->text(1).toUtf8().constData()); //nick
 
@@ -91,6 +100,69 @@ void MainWindow::OnChatDlgClosing(QString friendid)
             delete pChatDlg;
             pChatDlg = NULL;
         }
+    }
+}
+
+void MainWindow::WhenSomeOneLoggedIn(QStringList data)
+{
+    qDebug("WhenSomeOneLoggedIn");
+    qDebug( "0: [%s]", data[0].toUtf8().constData() );
+    qDebug( "1: [%s]", data[1].toUtf8().constData() );//id
+    qDebug( "2: [%s]", data[2].toUtf8().constData() );//nick
+
+    QTreeWidgetItem* subItem = new QTreeWidgetItem;
+    subItem->setText(0, data[1]);
+    subItem->setText(1, data[2]);
+
+    //remove from offline
+    QList<QTreeWidgetItem*> items =
+            ui->friendTree->findItems(data[1],Qt::MatchExactly|Qt::MatchRecursive,0);
+
+    qDebug( "items.count: [%d]", items.count());
+    if (items.count() > 0)
+    {
+        QTreeWidgetItem* removeItem = items[0];
+        rowOffline->removeChild(removeItem);
+        delete removeItem;
+    }
+
+    rowOnline->addChild(subItem);
+
+    DlgMapT::const_iterator i =  dlgMap.find(data[1]);
+    if(i != dlgMap.end())
+    {
+        ChatDialog* pChatDlg = i.value();
+        pChatDlg->SetInputEnabled(true);
+    }
+}
+
+void MainWindow::WhenSomeOneLoggedOut(QStringList data)
+{
+    qDebug("WhenSomeOneLoggedOut");
+
+    QTreeWidgetItem* subItem = new QTreeWidgetItem;
+    subItem->setText(0, data[1]);
+    subItem->setText(1, data[2]);
+
+    //remove from online
+    QList<QTreeWidgetItem*> items =
+            ui->friendTree->findItems(data[1],Qt::MatchExactly|Qt::MatchRecursive,0);
+
+    qDebug( "items.count: [%d]", items.count());
+    if (items.count() > 0)
+    {
+        QTreeWidgetItem* removeItem = items[0];
+        rowOnline->removeChild(removeItem);
+        delete removeItem;
+    }
+
+    rowOffline->addChild(subItem);
+
+    DlgMapT::const_iterator i =  dlgMap.find(data[1]);
+    if(i != dlgMap.end())
+    {
+        ChatDialog* pChatDlg = i.value();
+        pChatDlg->SetInputEnabled(false);
     }
 }
 
@@ -134,7 +206,7 @@ void MainWindow::WhenRemoveFriendResultOK(QString friendid)
     if(i < 0 )
     {
         ui->friendTree->takeTopLevelItem(i);
-        delete pRemove; // do not forget to delete the item if it is not owned by any other widget.
+        delete pRemove;
     }
 }
 

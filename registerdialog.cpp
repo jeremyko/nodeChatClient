@@ -30,6 +30,9 @@ RegisterDialog::RegisterDialog(QWidget *parent) :
     //ui->lblErrorText->setStyleSheet("QLabel { background-color : red; color : blue; }");
     ui->lblErrorText->setText("");
 
+    ui->PasswdInput->setEchoMode(QLineEdit::Password);
+    ui->ConfirmPasswdInput->setEchoMode(QLineEdit::Password);
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +91,7 @@ void RegisterDialog::enrollUser()
     qDebug("enroll User");
     ui->lblErrorText->setText("");
 
-    if(ui->PasswdInput->toPlainText() != ui->ConfirmPasswdInput->toPlainText() )
+    if(ui->PasswdInput->text() != ui->ConfirmPasswdInput->text() )
     {
         ui->lblErrorText->setStyleSheet("QLabel { color : red; }");
         ui->lblErrorText->setText("check your password !!");
@@ -97,6 +100,6 @@ void RegisterDialog::enrollUser()
 
     qDebug("enroll User:RequestEnrollUser");
     NetManager::GetInstance().RequestEnrollUser( ui->UserIDInput->toPlainText(),
-                                                 ui->PasswdInput->toPlainText(),
+                                                 ui->PasswdInput->text(),
                                                  ui->NickInput->toPlainText());
 }

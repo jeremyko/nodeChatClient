@@ -31,7 +31,7 @@
   <property name="windowTitle">
    <string>Chat</string>
   </property>
-  <widget class="QPlainTextEdit" name="MyMsgTE">
+  <widget class="ChatInputTextEdit" name="MyMsgTE">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -90,6 +90,13 @@
    </property>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ChatInputTextEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header>chatinputtextedit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

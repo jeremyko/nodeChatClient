@@ -13,7 +13,6 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
     NetManager::GetInstance().DummyInit();
 
-    //통신 모듈의 sigServerConnected 시그널을 serverConnected 슬롯으로,
     QObject::connect(&NetManager::GetInstance(), SIGNAL(sigServerConnected()),
                          this, SLOT(ServerConnected()));
 
@@ -36,6 +35,8 @@ LogInDialog::LogInDialog(QWidget *parent) :
     //init state disable
     ui->btnLogin->setEnabled(false);
     ui->btnRegister->setEnabled(false);
+
+    ui->UserPasswdInput->setEchoMode(QLineEdit::Password);
 }
 ////////////////////////////////////////////////////////////////////////////////
 LogInDialog::~LogInDialog()
@@ -60,7 +61,7 @@ void LogInDialog::LogIn()
 {
     qDebug("logIn");
     NetManager::GetInstance().RequestLogIn( ui->UserIDInput->toPlainText() ,
-                                     ui->UserPasswdInput->toPlainText() );
+                                     ui->UserPasswdInput->text()  );
 }
 ////////////////////////////////////////////////////////////////////////////////
 void LogInDialog::WhenLogInOK()

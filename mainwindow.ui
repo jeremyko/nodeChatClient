@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>553</height>
+    <width>382</width>
+    <height>436</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,14 +18,14 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>400</width>
-    <height>553</height>
+    <width>382</width>
+    <height>436</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>400</width>
-    <height>553</height>
+    <width>382</width>
+    <height>436</height>
    </size>
   </property>
   <property name="baseSize">
@@ -41,10 +41,10 @@
    <widget class="QTreeWidget" name="friendTree">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>10</x>
       <y>30</y>
-      <width>401</width>
-      <height>461</height>
+      <width>361</width>
+      <height>371</height>
      </rect>
     </property>
     <column>
@@ -79,23 +79,6 @@
      <string>remove friend</string>
     </property>
    </widget>
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>400</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuNew">
-    <property name="title">
-     <string>New</string>
-    </property>
-    <addaction name="actionFriend"/>
-   </widget>
-   <addaction name="menuNew"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
