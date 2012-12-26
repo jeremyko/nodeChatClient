@@ -1,10 +1,25 @@
 nodeChatClient
 ==============
 
-QT GUI chat client for the node.js tcp chatting server(https://github.com/jeremyko/nodeChatServer)
+QT GUI chat client for the node.js tcp chat server
+
+(https://github.com/jeremyko/nodeChatServer)
+
+Current features:
+
+1. enroll user
+
+2. add/remove friend
+
+3. login and retrieve my friend list
+
+4. notify logged in/out
+
+5. deliver chat message
 
 
 QT로 작성된 채팅 클라이언트 입니다.
+
 node.js로 작성된 tcp server(https://github.com/jeremyko/nodeChatServer)와 연동됩니다.
 
 현재 구현된 기능:
