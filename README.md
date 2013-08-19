@@ -33,3 +33,8 @@ node.js로 작성된 tcp server(https://github.com/jeremyko/nodeChatServer)와 �
 4. 로그인/아웃 여부를 모두에게 알리기 
 
 5. 채팅 메시지 전달하기 
+
+LICENSE
+-------
+
+This projected is licensed under the terms of the BSD license.
