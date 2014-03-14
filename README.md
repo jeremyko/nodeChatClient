@@ -5,6 +5,9 @@ QT GUI chat client for the node.js tcp chat server
 
 (https://github.com/jeremyko/nodeChatServer)
 
+![ScreenShot](http://1.bp.blogspot.com/-ERWTkRM-4vA/UNma_gy_kKI/AAAAAAAACy4/4xs3js-JDVE/s1600/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA+2012-12-25+%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE+4.30.10.png)
+
+
 Current features:
 
 1. enroll user
