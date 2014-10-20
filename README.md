@@ -3,7 +3,7 @@ nodeChatClient
 
 QT GUI chat client for the node.js tcp chat server
 
-http://jeremyko.blogspot.kr/2012/12/nodejs-tcp-chatting-server-with-qt.html#more
+http://jeremyko.blogspot.kr/2012/12/nodejs-tcp-chatting-server-with-qt.html
 
 (https://github.com/jeremyko/nodeChatServer)
 
