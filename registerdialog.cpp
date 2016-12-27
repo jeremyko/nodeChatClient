@@ -2,7 +2,8 @@
 #include "ui_registerdialog.h"
 #include "netmanager.h"
 
-#include <QtGui/QMessageBox>
+//#include <QtGui/QMessageBox>
+#include <QtWidgets/QMessageBox>
 
 RegisterDialog::RegisterDialog(QWidget *parent) :
     QDialog(parent),

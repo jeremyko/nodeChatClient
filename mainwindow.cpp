@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QTimer::singleShot(0, this, SLOT(Initialize()));
 
-    ui->friendTree->setSortingEnabled(TRUE);
+    ui->friendTree->setSortingEnabled(true);
 
     QTreeWidgetItem* header = new QTreeWidgetItem;
     header->setText(0, "user");
