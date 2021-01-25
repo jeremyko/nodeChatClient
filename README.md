@@ -39,7 +39,3 @@ node.js로 작성된 tcp server(https://github.com/jeremyko/nodeChatServer)와 �
 
 5. 채팅 메시지 전달하기 
 
-LICENSE
--------
-
-This projected is licensed under the terms of the BSD license.
