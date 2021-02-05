@@ -2,8 +2,10 @@
 
 #include <QtNetwork/QtNetwork>
 
-#define SERVER_HOST "localhost"
-static const int SERVER_PORT = 8124;
+////////////////////////////////////////////////////////////////////////////////
+#define SERVER_HOST "localhost"      //XXX
+static const int SERVER_PORT = 8124; //XXX
+
 
 //NetManager::NetManager(QObject *parent) //: QTcpSocket(parent)
 ////////////////////////////////////////////////////////////////////////////////
@@ -67,13 +69,10 @@ void NetManager::HandleResponseEnrollUser(QStringList strList)
     qDebug( "0: [%s]", strList[0].toUtf8().constData() );
     qDebug( "1: [%s]", strList[1].toUtf8().constData() );
 
-    if( strList[1] == "FAIL" )
-    {
+    if( strList[1] == "FAIL" ){
         qDebug("HandleResponseEnrollUser...FAIL!!!");
         emit sigEnrollUSerFAIL( strList[2] );
-    }
-    else
-    {
+    }else{
         qDebug("HandleResponseEnrollUser...OK");
         emit sigEnrollUSerOK();
     }
@@ -89,13 +88,10 @@ void NetManager::HandleResponseRemoveFriend(QStringList strList)
     qDebug( "1: [%s]", strList[1].toUtf8().constData() );
     qDebug( "2: [%s]", strList[2].toUtf8().constData() );
 
-    if( strList[1] == "FAIL" )
-    {
+    if( strList[1] == "FAIL" ){
         qDebug("HandleResponseRemoveFriend...FAIL!!!");
         emit sigRemoveFriendFAIL( strList[2] );
-    }
-    else
-    {
+    }else {
         qDebug("HandleResponseRemoveFriend...OK");
         emit sigRemoveFriendOK(strList[2] ); //friendid
     }
@@ -110,13 +106,10 @@ void NetManager::HandleResponseAddFriend(QStringList strList)
     qDebug( "0: [%s]", strList[0].toUtf8().constData() );
     qDebug( "1: [%s]", strList[1].toUtf8().constData() );
 
-    if( strList[1] == "FAIL" )
-    {
+    if( strList[1] == "FAIL" ){
         qDebug("HandleResponseAddFriend...FAIL!!!");
         emit sigAddFriendFAIL( strList[2] );
-    }
-    else
-    {
+    }else{
         qDebug("HandleResponseAddFriend...OK");
         emit sigAddFriendOK(strList[2],strList[3],strList[4] ); //friendid,nick, on/offline
     }
@@ -130,13 +123,10 @@ void NetManager::HandleResponseLogIn(QStringList strList)
     qDebug( "0: [%s]", strList[0].toUtf8().constData() );
     qDebug( "1: [%s]", strList[1].toUtf8().constData() );
 
-    if( strList[1] == "FAIL" )
-    {
+    if( strList[1] == "FAIL" ){
         qDebug("HandleLogIn...FAIL!!!");
         emit sigLogInFAIL( strList[2] );
-    }
-    else
-    {
+    }else{
         qDebug("HandleLogIn...OK");
         emit sigLogInOK();
     }
@@ -148,13 +138,10 @@ void NetManager::HandleResponseLogIn(QStringList strList)
 void NetManager::HandleResponseCheckId (QStringList strList)
 {
     qDebug("HandleResponseCheckId...");
-    if( strList[1] == "FAIL" )
-    {
+    if( strList[1] == "FAIL" ){
         qDebug("HandleLogIn...FAIL!!!");
         emit sigCheckIdFAIL( strList[2] );
-    }
-    else
-    {
+    }else{
         qDebug("HandleLogIn...OK");
         emit sigCheckIdOK();
     }
@@ -191,8 +178,7 @@ bool NetManager::SendDataBlock ( QByteArray msg )
     int nLenTot = dataBlock.length();
     qDebug("dataBlock.length()= %d", nLenTot);
 
-    if ( tcpSocket-> write(dataBlock) != dataBlock.size())
-    {
+    if ( tcpSocket-> write(dataBlock) != dataBlock.size()) {
         //error!!
         qDebug("Error/NetManager::LogIn/%s", qPrintable(tcpSocket->errorString()) );
         return false;
@@ -271,8 +257,7 @@ bool NetManager::SendMsg(QString& message)
 
     QByteArray msg = message.toUtf8();
     QByteArray data = "MESSAGE " + QByteArray::number(msg.size()) + ' ' + msg;
-    if ( tcpSocket-> write(data) != data.size())
-    {
+    if ( tcpSocket-> write(data) != data.size()) {
         //error!!
         qDebug("Error/NetManager::sendMsg/%s", qPrintable(tcpSocket->errorString()) );
         return false;
@@ -287,8 +272,7 @@ void NetManager::ProcessReadyRead()
     qDebug("\n---- recved data ------\n");
     qint64 bytesAvailable = tcpSocket->bytesAvailable();
     qDebug("bytesAvailable[%lld]",  bytesAvailable );
-    if(bytesAvailable <= packetHeaderLen)
-    {
+    if(bytesAvailable <= packetHeaderLen) {
         qDebug("bytesAvailable less than [%d] wait...",  (int)sizeof(quint32) );
         return;
     }
@@ -303,8 +287,7 @@ void NetManager::ProcessReadyRead()
     in >> nMsgLen ; // int 4 byte
     qDebug("nMsgLen=[%d]", nMsgLen );
 
-    if( (uint)totalBuffered.length() < nMsgLen)
-    {
+    if( (uint)totalBuffered.length() < nMsgLen){
         qDebug("패킷길이만큼 못받음...skip");
         return;
     }
@@ -312,7 +295,7 @@ void NetManager::ProcessReadyRead()
     //PacketHandle(&in, nMsgLen);
 
     char* szData = new char [nMsgLen+1]; //len은 null제외한 길이임.
-    memset(szData, 0x00, sizeof(szData));
+    memset(szData, 0x00, sizeof(nMsgLen+1));
     in.readRawData ( szData, nMsgLen );
     szData[nMsgLen]=0; // 전송되는 문자열에는 nulll이 없다.null 붙임.
     qDebug("szData=[%s]",  szData );
@@ -330,14 +313,13 @@ void NetManager::ProcessReadyRead()
     int nSize = totalBuffered.size();
     qDebug("totalBuffered.size [%d]",  nSize ); // 0
 
-    while( totalBuffered.size() >= (int) (nMsgLen + packetHeaderLen) )
-    {
+    while( totalBuffered.size() >= (int) (nMsgLen + packetHeaderLen) ) {
         QDataStream inTmp(&totalBuffered, QIODevice::ReadOnly);
         inTmp >> nMsgLen ;
         qDebug("#nMsgLen=[%d]", nMsgLen );
 
         char* szData = new char [nMsgLen+1]; //len은 null제외한 길이임.
-        memset(szData, 0x00, sizeof(szData));
+        memset(szData, 0x00, sizeof(nMsgLen+1));
         inTmp.readRawData ( szData, nMsgLen );
         szData[nMsgLen]=0; // 전송되는 문자열에는 nulll이 없다.null 붙임.
         qDebug("#szData=[%s]",  szData );

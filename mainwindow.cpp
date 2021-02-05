@@ -88,7 +88,7 @@ void MainWindow::OnTreeLButtonDbClicked( QTreeWidgetItem* item, int nIdex)
 
 void MainWindow::OnChatDlgClosing(QString friendid)
 {
-    DlgMapT::const_iterator i =  dlgMap.find(friendid);
+    DlgMapT::iterator i =  dlgMap.find(friendid);
     if(i != dlgMap.end())
     {
         qDebug( "Found in DlgMap");
@@ -128,7 +128,7 @@ void MainWindow::WhenSomeOneLoggedIn(QStringList data)
 
     rowOnline->addChild(subItem);
 
-    DlgMapT::const_iterator i =  dlgMap.find(data[1]);
+    DlgMapT::iterator i =  dlgMap.find(data[1]);
     if(i != dlgMap.end())
     {
         ChatDialog* pChatDlg = i.value();
@@ -158,7 +158,7 @@ void MainWindow::WhenSomeOneLoggedOut(QStringList data)
 
     rowOffline->addChild(subItem);
 
-    DlgMapT::const_iterator i =  dlgMap.find(data[1]);
+    DlgMapT::iterator i =  dlgMap.find(data[1]);
     if(i != dlgMap.end())
     {
         ChatDialog* pChatDlg = i.value();
@@ -174,7 +174,7 @@ void MainWindow::WhenChatMsgComes(QStringList msgData)
     qDebug( "3: [%s]", msgData[3].toUtf8().constData() );//msg
 
     //find chat dlg
-    DlgMapT::const_iterator i =  dlgMap.find(msgData[1]);
+    DlgMapT::iterator i =  dlgMap.find(msgData[1]);
     if(i != dlgMap.end())
     {
         qDebug( "Found in DlgMap");
